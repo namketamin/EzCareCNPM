@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<PropertyGroup>
+<Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
+<Platform Condition="'$(Platform)' == ''">AnyCPU</Platform>
+<ProjectGuid>{5C676CD2-6223-46B5-BA01-240C31AB1002}</ProjectGuid><OutputType>Library</OutputType>
+<RootNamespace>EzCare.BLL</RootNamespace><AssemblyName>EzCare.BLL</AssemblyName>
+<TargetFrameworkVersion>v4.8</TargetFrameworkVersion><LangVersion>7.3</LangVersion>
+<OutputPath>bin\$(Configuration)\</OutputPath><DebugSymbols>true</DebugSymbols><DebugType>full</DebugType>
+</PropertyGroup>
+<ItemGroup><Reference Include="System" /><Reference Include="System.Core" /><Reference Include="System.Data" /><Reference Include="System.Configuration" /></ItemGroup>
+<ItemGroup>
+<Compile Include="Accounts.cs"></Compile>
+<Compile Include="Bookings.cs"></Compile>
+<Compile Include="Clinic.cs"></Compile>
+<Compile Include="EzCareService.cs"></Compile>
+<Compile Include="Notifications.cs"></Compile>
+<Compile Include="Rules.cs"></Compile>
+<Compile Include="Schedules.cs"></Compile>
+</ItemGroup><ItemGroup><ProjectReference Include="..\DAL\EzCare.DAL.csproj"><Project>{5C676CD2-6223-46B5-BA01-240C31AB1003}</Project><Name>EzCare.DAL</Name></ProjectReference>
+<ProjectReference Include="..\DTO\EzCare.DTO.csproj"><Project>{5C676CD2-6223-46B5-BA01-240C31AB1004}</Project><Name>EzCare.DTO</Name></ProjectReference></ItemGroup>
+<Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+
+</Project>

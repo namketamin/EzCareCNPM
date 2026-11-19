@@ -1,0 +1,103 @@
+<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Site.Master.cs" Inherits="SiteLayout" %>
+<!doctype html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title><%= BasePage.E(View.TitleText) %> | EzCare</title>
+    <link rel="stylesheet" href="<%= ResolveUrl("~/Content/bootstrap.min.css") %>">
+    <link rel="stylesheet" href="<%= ResolveUrl("~/Content/fonts.css") %>">
+    <link rel="stylesheet" href="<%= ResolveUrl("~/Content/site.css?v=6.8") %>">
+    <script defer src="<%= ResolveUrl("~/Content/site.js?v=6.8") %>"></script>
+</head>
+<body id="top" class="<%= View.Screen == "home" ? "landing" : "workspace" %> <%= View.Role == 0 ? "public" : "signed-in" %> screen-<%= BasePage.E(View.Screen) %>">
+<a class="skip" href="#main">Đến nội dung chính</a><header class="top">
+    <div class="top-inner">
+    <a class="brand" href="<%= BasePage.E(View.Link("home")) %>" aria-label="EzCare, về trang chính">
+        <span class="brand-mark" aria-hidden="true"></span><span><strong>EzCare</strong><small><%= View.Role == 0 ? "Đặt lịch khám bệnh" : "Khu vực " + BasePage.RoleName(View.Role).ToLower() %></small></span>
+    </a>
+    <% if (View.Role == 0) { %>
+    <nav class="public-nav" id="public-navigation" aria-label="Điều hướng chính">
+        <%= View.Nav("home","Trang chủ") %>
+        <%= View.Nav("doctors","Bác sĩ") %>
+        <%= View.Nav("about","Giới thiệu") %>
+        <%= View.Nav("contact","Liên hệ") %>
+        <a class="mobile-account" href="<%= BasePage.E(View.Link("login")) %>">Đăng nhập</a>
+        <a class="mobile-account" href="<%= BasePage.E(View.Link("register")) %>">Đăng ký</a>
+    </nav>
+    <form class="header-search" method="get" action="<%= BasePage.E(View.Link("doctors")) %>">
+<label class="visually-hidden" for="header-doctor-search">Tìm tên bác sĩ</label><input id="header-doctor-search" name="name" maxlength="100" placeholder="Tìm bác sĩ"><button class="quiet">Tìm</button>
+</form>
+<div class="header-actions">
+        <button type="button" class="menu-toggle quiet" aria-controls="public-navigation" aria-expanded="false">Menu</button>
+        <%= View.Nav("login","Đăng nhập") %>
+        <a class="button primary" href="<%= BasePage.E(View.Link("book")) %>" <%= View.Screen == "book" ? "aria-current=\"page\"" : "" %>>Đặt lịch khám</a>
+    </div>
+    <% } else { %>
+    <div class="identity"><span class="user-avatar" aria-hidden="true"><%= BasePage.E(BasePage.Initials(View.UserAccount.Name)) %></span><div><a class="identity-name" href="<%= BasePage.E(View.Link("profile")) %>" title="Hồ sơ cá nhân"><strong><%= BasePage.E(View.UserAccount.Name) %></strong></a><small><%= BasePage.RoleName(View.Role) %></small></div>
+        <form method="post" action="<%= BasePage.E(View.Link("home")) %>"><input type="hidden" name="csrf" value="<%= BasePage.E(View.Csrf) %>"><input type="hidden" name="action" value="logout"><button class="quiet">Đăng xuất</button></form>
+    </div>
+    <% } %>
+    </div>
+</header>
+<div class="<%= View.Role == 0 ? "public-shell" : "app-shell" %>">
+<% if (View.Role != 0) { %>
+<nav class="side" id="workspace-navigation" aria-label="Điều hướng chính">
+    <span class="side-label"><%= BasePage.RoleName(View.Role) %></span>
+    <% if (View.Role == Actor.Patient || View.Reception) { %>
+        <%= View.Nav("book",View.Reception ? "Đặt lịch hộ" : "Đặt lịch khám") %>
+        <%= View.Nav("appointments",View.Reception ? "Tiếp nhận tại quầy" : "Lịch hẹn của tôi") %>
+        <% if (View.Reception) { %><%= View.Nav("affected","Lịch cần dời") %><% } else { %><%= View.Nav("notifications","Thông báo và nhắc lịch") %><%= View.Nav("profile","Hồ sơ cá nhân") %><% } %>
+    <% } else if (View.Role == Actor.Doctor) { %>
+        <%= View.Nav("appointments","Danh sách khám") %><%= View.Nav("schedules","Ca của tôi") %><%= View.Nav("requests","Đơn của tôi") %>
+    <% } else { %>
+        <%= View.Nav("schedules","Ca làm việc") %><%= View.Nav("appointments","Lịch hẹn và tiếp nhận") %><%= View.Nav("book","Đặt lịch hộ") %><%= View.Nav("affected","Lịch cần dời") %><%= View.Nav("requests","Duyệt đơn nghỉ / đổi ca") %><%= View.Nav("staff","Tài khoản nhân sự") %><%= View.Nav("specialties","Chuyên khoa") %><%= View.Nav("passwords","Mật khẩu tài khoản") %>
+    <% } %>
+</nav>
+<% } %>
+
+<main id="main" tabindex="-1" class="<%= View.Role == 0 ? "public-main" : "sheet" %>">
+    <% if (!String.IsNullOrEmpty(View.Message)) { %><div class="notice <%= View.Failed ? "error" : "success" %>" role="<%= View.Failed ? "alert" : "status" %>" tabindex="-1"><%= BasePage.E(View.Message) %></div><% } %>
+    <% if (View.Available) { %>
+    <% if (View.Screen != "home") { %><div class="page-head"><div><h1><%= BasePage.E(View.TitleText) %></h1><p><%= BasePage.E(View.PageDescription()) %></p></div></div><% } %>
+    <asp:ContentPlaceHolder ID="MainContent" runat="server" />
+    <% } %>
+</main>
+</div>
+<% if (View.Role == 0) { %>
+<footer class="footer">
+    <div class="footer-inner">
+        <div class="footer-intro">
+            <a class="brand" href="<%= BasePage.E(View.Link("home")) %>"><span class="brand-mark" aria-hidden="true"></span><strong>EzCare</strong></a>
+            <p>Đặt lịch khám, theo dõi lịch hẹn và làm thủ tục tại phòng khám.</p>
+        </div>
+        <nav aria-label="Đặt và quản lý lịch khám">
+            <h2>Dành cho bệnh nhân</h2>
+            <a href="<%= BasePage.E(View.Link("book")) %>">Tìm giờ khám</a>
+            <a href="<%= BasePage.E(View.Link("appointments")) %>">Lịch hẹn của tôi</a>
+            <a href="<%= BasePage.E(View.Link("register")) %>">Đăng ký tài khoản</a>
+        </nav>
+        <nav aria-label="Hướng dẫn sử dụng">
+            <h2>Hướng dẫn</h2>
+            <a href="<%= BasePage.E(View.Link("home")) %>#cach-dat">Các bước đặt lịch</a>
+            <a href="<%= BasePage.E(View.Link("home")) %>#truoc-khi-kham">Mã hẹn và đổi, hủy lịch</a>
+            <a href="<%= BasePage.E(View.Link("contact")) %>">Liên hệ phòng khám</a>
+            <a href="<%= BasePage.E(View.Link("terms")) %>">Điều khoản sử dụng</a>
+            <a href="<%= BasePage.E(View.Link("privacy")) %>">Bảo mật thông tin</a>
+        </nav>
+        <div class="footer-contact"><strong>Liên hệ phòng khám</strong>
+<p>Địa chỉ · <%= BasePage.E(Contact("ClinicAddress")) %></p>
+<p>Hotline · <%= BasePage.E(Contact("ClinicPhone")) %></p>
+<p>Email · <%= BasePage.E(Contact("ClinicEmail")) %></p></div>
+<div class="footer-bottom"><span>© <%= DateTime.Today.Year %> EzCare. Đặt lịch khám trực tuyến.</span></div>
+    </div>
+</footer>
+<% } else { %>
+<footer class="app-footer"><span>© <%= DateTime.Today.Year %> EzCare</span></footer>
+<% } %>
+<a href="#top" class="back-to-top" aria-label="Về đầu trang" title="Về đầu trang" hidden>
+    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7" /></svg>
+</a>
+</body>
+</html>
+
