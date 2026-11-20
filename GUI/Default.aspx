@@ -23,7 +23,7 @@
     </div>
     <figure class="home-visual">
         <img src="<%= ResolveUrl("~/Content/clinic.jpg") %>" alt="Bác sĩ trao đổi với bệnh nhân trong phòng khám" width="1448" height="1086" fetchpriority="high">
-        <figcaption>Ảnh minh họa buổi tư vấn tại phòng khám</figcaption>
+        <!-- <figcaption>Ảnh minh họa buổi tư vấn tại phòng khám</figcaption> -->
     </figure>
 </div>
 <div class="home-catalog">
